@@ -1,0 +1,15 @@
+
+[demo]
+    # 连接地址addr
+	addr = "dev.hn-zm.com:3306"
+	# 读和写的dsn
+	dsn = "root:zm2018@tcp(dev.hn-zm.com:3306)/demo?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8"
+	readDSN = ["root:zm2018@tcp(dev.hn-zm.com:3306)/demo?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8mb4,utf8","root:zm2018@tcp(127.0.0.3:3306)/demo?timeout=1s&readTimeout=1s&writeTimeout=1s&parseTime=true&loc=Local&charset=utf8,utf8mb4"]
+	# 最大连接数
+	active = 20
+	# 连接池的闲置连接数
+	idle = 10
+	idleTimeout ="4h"
+	queryTimeout = "200ms"
+	execTimeout = "300ms"
+	tranTimeout = "400ms"

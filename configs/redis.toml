@@ -1,0 +1,14 @@
+
+demoExpire = "24h"
+
+[demo]
+	name = "demo"
+	proto = "tcp"
+	addr = "dev.hn-zm.com:6379"
+	auth = "Ypdan2019"
+	idle = 10
+	active = 10
+	dialTimeout = "1s"
+	readTimeout = "1s"
+	writeTimeout = "1s"
+	idleTimeout = "10s"
