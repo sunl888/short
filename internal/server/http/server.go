@@ -40,14 +40,14 @@ func initRouter(e *bm.Engine) {
 	e.Ping(ping)
 	g := e.Group("/demo")
 	{
-		g.GET("/start", howToStart)
+		//g.GET("/start", howToStart)
 	}
 	api := e.Group("/api/v1")
 	{
 		api.GET("/test", func(c *bm.Context) {
 			c.Render(200, render.JSON{Code: http.StatusOK, Message: "hello", TTL: 3600, Data: "33"})
 		})
-		api.GET("/user:id", queryUserInfo)
+		api.GET("/user:id", QueryUserInfo)
 
 	}
 }
@@ -59,10 +59,10 @@ func ping(ctx *bm.Context) {
 	}
 }
 
-// example for http request handler.
-func howToStart(c *bm.Context) {
-	k := &model.Kratos{
-		Hello: "Golang 大法好 !!!",
-	}
-	c.JSON(k, nil)
-}
+//// example for http request handler.
+//func howToStart(c *bm.Context) {
+//	k := &model.Kratos{
+//		Hello: "Golang 大法好 !!!",
+//	}
+//	c.JSON(k, nil)
+//}

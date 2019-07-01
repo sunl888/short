@@ -2,17 +2,18 @@ package dao
 
 import (
 	"context"
+	"demo/internal/dao/orm"
 	"github.com/bilibili/kratos/pkg/cache/redis"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
-	"github.com/bilibili/kratos/pkg/database/sql"
 	"github.com/bilibili/kratos/pkg/log"
 	xtime "github.com/bilibili/kratos/pkg/time"
+	"github.com/jinzhu/gorm"
 	"time"
 )
 
 // Dao dao.
 type Dao struct {
-	db          *sql.DB
+	db          *gorm.DB
 	redis       *redis.Pool
 	redisExpire int32
 }
@@ -27,20 +28,20 @@ func checkErr(err error) {
 func New() (dao *Dao) {
 	var (
 		dc struct {
-			Demo *sql.Config
+			shortDomain *orm.Config
 		}
 		rc struct {
-			Demo       *redis.Config
-			DemoExpire xtime.Duration
+			shortDomain *redis.Config
+			DemoExpire  xtime.Duration
 		}
 	)
 	checkErr(paladin.Get("mysql.toml").UnmarshalTOML(&dc))
 	checkErr(paladin.Get("redis.toml").UnmarshalTOML(&rc))
 	dao = &Dao{
 		// mysql
-		db: sql.NewMySQL(dc.Demo),
+		db: orm.NewMySQL(dc.shortDomain),
 		// redis
-		redis:       redis.NewPool(rc.Demo),
+		redis:       redis.NewPool(rc.shortDomain),
 		redisExpire: int32(time.Duration(rc.DemoExpire) / time.Second),
 	}
 	return
@@ -55,9 +56,14 @@ func (d *Dao) Close() {
 // Ping ping the resource.
 func (d *Dao) Ping(ctx context.Context) (err error) {
 	if err = d.pingRedis(ctx); err != nil {
+		log.Error("ping redis error(%v)", err)
 		return
 	}
-	return d.db.Ping(ctx)
+	if err = d.db.DB().Ping(); err != nil {
+		log.Error("ping mysql error(%v)", err)
+		return
+	}
+	return
 }
 
 func (d *Dao) pingRedis(ctx context.Context) (err error) {

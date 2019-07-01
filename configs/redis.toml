@@ -1,7 +1,7 @@
 
 demoExpire = "24h"
 
-[demo]
+[shortDomain]
 	name = "demo"
 	proto = "tcp"
 	addr = "dev.hn-zm.com:6379"
