@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	_shortDomainRedisKey     = "short_domain:%s"
-	_shortDomainListRedisKey = "short_domain_list"
+	_shortDomainRedisKey       = "short_domain:%s"
+	_shortUrlListRedisKey      = "short_url_list"
+	_originUrlHashListRedisKey = "origin_url_hash_list"
 )
 
 // 创建短网址记录
@@ -35,7 +36,13 @@ func (d *Dao) QueryOrder(domain *model.Domain, pn int32, ps int32) (qor *model.Q
 
 // 为短网址创建缓存
 func (d *Dao) CacheShortUrl(c context.Context, shortUrl string) (err error) {
-	_, err = d.SAdd(c, _shortDomainListRedisKey, shortUrl)
+	_, err = d.SAdd(c, _shortUrlListRedisKey, shortUrl)
+	return
+}
+
+// 为源网址创建缓存
+func (d *Dao) CacheOriginUrlHash(c context.Context, originUrlHash string) (err error) {
+	_, err = d.SAdd(c, _originUrlHashListRedisKey, originUrlHash)
 	return
 }
 
@@ -55,7 +62,16 @@ func (d *Dao) CacheDomainByShortUrl(c context.Context, domain *model.Domain) (er
 
 // 判断这个短网址是否被使用
 func (d *Dao) ShortUrlHasBeenUsed(c context.Context, shortUrl string) (hasBeenUsed bool) {
-	hasBeenUsed, err := d.SIsMember(c, _shortDomainListRedisKey, shortUrl)
+	hasBeenUsed, err := d.SIsMember(c, _shortUrlListRedisKey, shortUrl)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+// 判断这个源网址是否存在
+func (d *Dao) OriginUrlHashHasExist(c context.Context, originUrl string) (hasBeenUsed bool) {
+	hasBeenUsed, err := d.SIsMember(c, _originUrlHashListRedisKey, originUrl)
 	if err != nil {
 		panic(err)
 	}

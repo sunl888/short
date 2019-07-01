@@ -8,6 +8,7 @@ import (
 )
 
 func (s *Service) CreateDomain(c context.Context, domain *model.Domain) (err error) {
+
 	urls := lib.GenerateShortUrl(domain.RedirectUrl)
 	shortUrl := ""
 	for _, url := range urls {
