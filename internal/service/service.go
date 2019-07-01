@@ -2,9 +2,8 @@ package service
 
 import (
 	"context"
-
-	"demo/internal/dao"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
+	"github.com/wq1019/short/internal/dao"
 )
 
 // Service service.

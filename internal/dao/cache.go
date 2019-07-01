@@ -2,9 +2,9 @@ package dao
 
 import (
 	"context"
-	"demo/internal/lib"
 	"github.com/bilibili/kratos/pkg/cache/redis"
 	"github.com/bilibili/kratos/pkg/log"
+	"github.com/wq1019/short/internal/lib"
 	"time"
 
 	stderr "errors"

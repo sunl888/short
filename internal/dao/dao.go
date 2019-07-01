@@ -2,7 +2,6 @@ package dao
 
 import (
 	"context"
-	"demo/internal/dao/orm"
 	"github.com/bilibili/kratos/pkg/cache/redis"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"

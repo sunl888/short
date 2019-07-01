@@ -1,9 +1,8 @@
 package http
 
 import (
-	"demo/internal/model"
-	"demo/internal/service"
 	"github.com/bilibili/kratos/pkg/net/http/blademaster/render"
+	"github.com/wq1019/short/internal/service"
 	"net/http"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"

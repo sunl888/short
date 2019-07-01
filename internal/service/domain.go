@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"demo/internal/lib"
-	"demo/internal/model"
 	"github.com/pkg/errors"
+	"github.com/wq1019/short/internal/lib"
+	"github.com/wq1019/short/internal/model"
 )
 
 func (s *Service) CreateDomain(c context.Context, domain *model.Domain) (err error) {

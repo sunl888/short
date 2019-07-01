@@ -3,15 +3,14 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/bilibili/kratos/pkg/conf/paladin"
+	"github.com/bilibili/kratos/pkg/log"
+	"github.com/wq1019/short/internal/server/http"
+	"github.com/wq1019/short/internal/service"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-
-	"demo/internal/server/http"
-	"demo/internal/service"
-	"github.com/bilibili/kratos/pkg/conf/paladin"
-	"github.com/bilibili/kratos/pkg/log"
 )
 
 func main() {

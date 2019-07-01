@@ -2,10 +2,10 @@ package dao
 
 import (
 	"context"
-	"demo/internal/model"
 	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
+	"github.com/wq1019/short/internal/model"
 )
 
 const (
