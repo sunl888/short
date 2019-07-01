@@ -7,6 +7,7 @@ import (
 	"github.com/bilibili/kratos/pkg/log"
 	xtime "github.com/bilibili/kratos/pkg/time"
 	"github.com/jinzhu/gorm"
+	"github.com/wq1019/short/internal/dao/orm"
 	"time"
 )
 
@@ -48,8 +49,12 @@ func New() (dao *Dao) {
 
 // Close close the resource.
 func (d *Dao) Close() {
-	d.redis.Close()
-	d.db.Close()
+	if d.db != nil {
+		_ = d.db.Close()
+	}
+	if d.redis != nil {
+		_ = d.redis.Close()
+	}
 }
 
 // Ping ping the resource.
