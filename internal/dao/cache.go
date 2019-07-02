@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/bilibili/kratos/pkg/cache/redis"
 	"github.com/bilibili/kratos/pkg/log"
 	"github.com/wq1019/short/internal/lib"
@@ -10,7 +11,6 @@ import (
 	stderr "errors"
 
 	"github.com/pkg/errors"
-
 )
 
 // Incr incr
@@ -167,4 +167,17 @@ func (d *Dao) SetWithNxEx(ctx context.Context, key, value string, ex int64) (str
 	conn := d.redis.Get(ctx)
 	defer conn.Close()
 	return redis.String(conn.Do("SET", key, value, "EX", ex, "NX"))
+}
+
+// 发布消息
+func (d *Dao) Publish(ctx context.Context, channel string, data interface{}) (reply int64, err error) {
+	conn := d.redis.Get(ctx)
+	defer conn.Close()
+	dataByte, err := json.Marshal(data)
+	if err != nil {
+		err = errors.WithMessage(err, "对象序列化失败")
+		return
+	}
+
+	return redis.Int64(conn.Do("PUBLISH", channel, dataByte))
 }

@@ -36,7 +36,6 @@ func NewMySQL(c *Config) (db *gorm.DB) {
 		log.Error("db dsn(%s) error: %v", c.DSN, err)
 		panic(err)
 	}
-	db.Callback().Create().Register()
 	db.DB().SetMaxIdleConns(c.Idle)
 	db.DB().SetMaxOpenConns(c.Active)
 	db.DB().SetConnMaxLifetime(time.Duration(c.IdleTimeout) / time.Second)

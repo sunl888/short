@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/bilibili/kratos/pkg/net/http/blademaster/render"
 	"github.com/wq1019/short/internal/service"
 	"net/http"
 
@@ -37,17 +36,9 @@ func New(s *service.Service) (engine *bm.Engine) {
 
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
-	g := e.Group("/demo")
-	{
-		//g.GET("/start", howToStart)
-	}
 	api := e.Group("/api/v1")
 	{
-		api.GET("/test", func(c *bm.Context) {
-			c.Render(200, render.JSON{Code: http.StatusOK, Message: "hello", TTL: 3600, Data: "33"})
-		})
-		api.GET("/user:id", QueryUserInfo)
-
+		api.POST("/domain", createDomain)
 	}
 }
 

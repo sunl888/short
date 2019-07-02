@@ -20,11 +20,10 @@ var (
 // 将32位字符串每8位划分一段，得到4段子串。将每个字串（16进制形式）转化为整型数值，与0x3FFFFFFF按位与运算，生成一个30位的数值
 // 将上述生成的30位数值按5位为单位依次提取，得到的数值与0x0000003D按位与，获取一个0-61的整型数值，作为从字符数组中提取字符的索引。得到6个字符就生成了一个短链
 // 4段字串共可以生成4个短链
-func GenerateShortUrl(originUrl string) [4]string {
-	longUrlMd5 := Md5(originUrl)
+func GenerateShortUrl(hash string) [4]string {
 	var result [4]string
 	for i := 0; i < 4; i++ {
-		tmpUrl := longUrlMd5[i*8 : (i+1)*8]
+		tmpUrl := hash[i*8 : (i+1)*8]
 		calcTmpUrl, _ := strconv.ParseInt(tmpUrl, 16, 64)
 		tmpVal := int64(VAL) & calcTmpUrl
 		var index int64
