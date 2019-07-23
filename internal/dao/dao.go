@@ -2,16 +2,13 @@ package dao
 
 import (
 	"context"
-	"fmt"
 	"github.com/bilibili/kratos/pkg/cache/redis"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"
 	xtime "github.com/bilibili/kratos/pkg/time"
 	"github.com/jinzhu/gorm"
-	"github.com/pkg/errors"
 	"github.com/wq1019/short/internal/contants"
 	"github.com/wq1019/short/internal/dao/orm"
-	"sync"
 	"time"
 )
 
@@ -19,8 +16,8 @@ import (
 type Dao struct {
 	db          *gorm.DB
 	redis       *redis.Pool
+	subRedis    *redis.Conn
 	redisExpire int32
-	//subCreateDomainFunc func(dao Dao)
 }
 
 func checkErr(err error) {
@@ -42,57 +39,31 @@ func New() (dao *Dao) {
 	)
 	checkErr(paladin.Get("mysql.toml").UnmarshalTOML(&dc))
 	checkErr(paladin.Get("redis.toml").UnmarshalTOML(&rc))
+	// 获取一个长连接给 sub 使用
+	cn, err := redis.Dial(rc.ShortDomain.Proto, rc.ShortDomain.Addr,
+		redis.DialPassword(rc.ShortDomain.Auth),
+		redis.DialWriteTimeout(time.Duration(rc.ShortDomain.WriteTimeout)),
+		redis.DialDatabase(1),
+	)
+	checkErr(err)
 	dao = &Dao{
 		// mysql
 		db: orm.NewMySQL(dc.ShortDomain),
 		// redis
 		redis:       redis.NewPool(rc.ShortDomain, redis.DialDatabase(1)),
 		redisExpire: int32(time.Duration(rc.RedisExpire) / time.Second),
+		subRedis:    &cn,
 	}
 
 	// redis 订阅
 	var sub Subscriber
-	ctx := context.Background()
-	sub.Connect(dao.redis.Get(ctx))
+	sub.Connect(*dao.subRedis)
 	// 订阅创建短链接消息
 	sub.Subscribe(contants.CreateDomainChannel, func(channel string, message []byte) {
 		log.Info("收到 createDomain 频道的消息: %s; 正文: %s\n", channel, string(message))
 	})
 
 	return
-}
-
-func (d *Dao) PubSub(ctx context.Context) {
-	c := d.redis.Get(ctx)
-	defer c.Close()
-	var wg sync.WaitGroup
-	wg.Add(1)
-	psc := redis.PubSubConn{Conn: c}
-	go func() {
-		defer wg.Done()
-		for {
-			switch n := psc.Receive().(type) {
-			case redis.Message:
-				fmt.Printf("Message: %s %s\n", n.Channel, n.Data)
-			case redis.PMessage:
-				fmt.Printf("PMessage: %s %s %s\n", n.Pattern, n.Channel, n.Data)
-			case redis.Subscription:
-				fmt.Printf("Subscription: %s %s %d\n", n.Kind, n.Channel, n.Count)
-				if n.Count == 0 {
-					return
-				}
-			case error:
-				fmt.Printf("error: %v\n", n)
-				return
-			}
-		}
-	}()
-	// 订阅创建短链接消息
-	if err := psc.Subscribe(contants.CreateDomainChannel); err != nil {
-		fmt.Println("订阅失败")
-		err = errors.WithMessage(err, "订阅失败")
-		panic(err)
-	}
 }
 
 // Close close the resource.

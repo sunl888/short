@@ -4,12 +4,12 @@ redisExpire = "24h"
 [shortDomain]
     name = "shortDomain"
     proto = "tcp"
-    addr = "127.0.0.1:6379"
-#    auth = "zm2018"
+    addr = "dev.hn-zm.com:6379"
+    auth = "zm2018"
     idle = 10
     db = 1
     active = 10
     dialTimeout = "1s"
-    readTimeout = "1h"
-    writeTimeout = "10s"
+    readTimeout = "1s"
+    writeTimeout = "1s"
     idleTimeout = "10s"
